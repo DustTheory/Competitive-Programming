@@ -7,10 +7,10 @@
 #include <algorithm>
 #include <set>
 #include <map>
+#include <stack>
+#include <queue>
 
 /// Spaghetti code by DE5C3NDER(Ishak Dervisevic)
-
-using namespace std;
 
 // Defining some constants//{
 
@@ -59,7 +59,7 @@ namespace Geometry{
     Point intersection(Line_Segment &ls1, Line_Segment &ls2);
 
     // Polygon stuff
-    vector<Polygon> split_by_intersections(Polygon poly);
+    std::vector<Polygon> split_by_intersections(Polygon poly);
 
     // General geometry suff
     double ccw(Line_Segment line, Point point);
@@ -79,9 +79,9 @@ namespace Graph{
 
 namespace StringProcessing{
     struct Trie;
-    vector<int> kmp_preproces(string &str);
-    int kmp_find_first(string &to_read, string &to_find);
-    vector<int> kmp_find_multiple(string &to_read, string &to_find);
+    std::vector<int> kmp_preproces(std::string &str);
+    int kmp_find_first(std::string &to_read, std::string &to_find);
+    std::vector<int> kmp_find_multiple(std::string &to_read, std::string &to_find);
 }
 
 //}
@@ -93,11 +93,11 @@ bool __are_equal(double a, double b){
 
 namespace Graph{
     struct Adjacency_List{
-        vector<set<int>> graph;
+        std::vector<std::set<int>> graph;
         Adjacency_List(){}
         Adjacency_List(int vertecies){
             graph.clear();
-            set<int> dummy;
+            std::set<int> dummy;
             for(int i = 0; i < vertecies; i++){
                 graph.push_back(dummy);
             }
@@ -109,11 +109,11 @@ namespace Graph{
                 graph[to].insert(from);
         }
         // All the stuff needed to get graph components here //{
-        vector<vector<int>> get_components(){
-            vector<bool> visited (graph.size()+1);
+        std::vector<std::vector<int>> get_components(){
+            std::vector<bool> visited (graph.size()+1);
             fill(visited.begin(), visited.end(), false);
 
-            vector<vector<int>> components;
+            std::vector<std::vector<int>> components;
 
             for(int i = 0; i < graph.size(); i++){
                 if(!visited[i])
@@ -121,15 +121,15 @@ namespace Graph{
             }
             return components;
         }
-        vector<int> _get_components(int p, vector<bool> &visited){
-            vector<int> components;
+        std::vector<int> _get_components(int p, std::vector<bool> &visited){
+            std::vector<int> components;
             __get_components(p, visited, components);
             return components;
         }
-        void __get_components(int p, vector<bool> &visited, vector<int> &components){
+        void __get_components(int p, std::vector<bool> &visited, std::vector<int> &components){
             components.push_back(p);
             visited[p] = true;
-            set<int>::iterator it;
+            std::set<int>::iterator it;
             for (it = graph[p].begin(); it != graph[p].end(); ++it){
                 if(!visited[*it])
                     __get_components(*it, visited, components);
@@ -138,22 +138,22 @@ namespace Graph{
         //}
         void log(){
             for(int i = 0; i < graph.size(); i++){
-                cout << "Point " << i << " connects to points: ";
-                set<int>::iterator it;
+                std::cout << "Point " << i << " connects to points: ";
+                std::set<int>::iterator it;
                 for (it = graph[i].begin(); it != graph[i].end(); ++it){
-                    cout << *it << ' ';
+                    std::cout << *it << ' ';
                 }
-                cout << endl;
+                std::cout << std::endl;
             }
         }
     };
     struct Adjacency_Matrix{
-        vector<vector<bool>> matrix;
+        std::vector<std::vector<bool>> matrix;
         Adjacency_Matrix(){}
         Adjacency_Matrix(int verticies){
             matrix.clear();
             for(int i = 0; i < verticies; i++){
-                matrix.push_back(vector<bool>());
+                matrix.push_back(std::vector<bool>());
                 for(int j = 0; j < verticies; j++){
                     if(i == j)
                         matrix[i].push_back(true);
@@ -161,7 +161,7 @@ namespace Graph{
                 }
             }
         }
-        Adjacency_Matrix(vector<vector<bool>> _matrix){
+        Adjacency_Matrix(std::vector<std::vector<bool>> _matrix){
             matrix = _matrix;
         }
         void add_connection(int from, int to, bool direction){
@@ -212,7 +212,7 @@ namespace Geometry{
             return rotate_rad(DEG_TO_RAD(deg));
         }
         void log(){
-            cout << "x: " << x << "y: " << y << endl;
+            std::cout << "x: " << x << "y: " << y << std::endl;
         }
         bool is_null(){
            return *this == NULL_POINT;
@@ -230,7 +230,7 @@ namespace Geometry{
         Line(Point point1, Point point2){
 
             if(point1.x > point2.x)
-                swap(point1, point2);
+                std::swap(point1, point2);
 
             if(__are_equal(point1.x, point2.x)){
                 a = 1.0;
@@ -249,7 +249,7 @@ namespace Geometry{
             return are_paralel(*this, other) && c == other.c;
         }
         void log(){
-            cout << a << "per 1 unit starting from y = " << c << endl;
+            std::cout << a << "per 1 unit starting from y = " << c << std::endl;
         }
     };
 
@@ -290,7 +290,7 @@ namespace Geometry{
             return sqrt(x*x + y*y);
         }
         void log(){
-            cout << x << ' ' << y << endl;
+            std::cout << x << ' ' << y << std::endl;
         }
     };
 
@@ -301,7 +301,7 @@ namespace Geometry{
         Line_Segment(){}
         Line_Segment(Point _a, Point _b){
             if(_a.x > _b.x)
-                swap(_a, _b);
+                std::swap(_a, _b);
             a = _a;
             b = _b;
             line = Line(a, b);
@@ -312,23 +312,23 @@ namespace Geometry{
             b = Point(bx, by);
         }
         void log(){
-            cout << "Parent line: ";
+            std::cout << "Parent line: ";
             line.log();
-            cout << "starting point:";
+            std::cout << "starting point:";
             a.log();
-            cout << "ending point: ";
+            std::cout << "ending point: ";
             b.log();
-            cout << "length: " << length << endl;
+            std::cout << "length: " << length << std::endl;
         }
     };
 
     struct Polygon{
-        vector<Point> points;
+        std::vector<Point> points;
         Graph::Adjacency_Matrix graph;
         bool graph_exists = false;
 
         Polygon(){}
-        Polygon(vector<Point> _points){
+        Polygon(std::vector<Point> _points){
             points = _points;
             graph.clear();
         }
@@ -535,7 +535,8 @@ namespace Geometry{
     double determinant(Vector2 &vec1, Vector2 &vec2){
         return (double)(vec1.x * vec2.y - vec2.x * vec1.y);
     }
-    vector<Geometry::Polygon> split_by_intersections(Geometry::Polygon poly){
+
+    std::vector<Polygon> split_by_intersections(Polygon poly){
 
         // Make a graph from polygon with added verticies at intersections
         int s = poly.points.size();
@@ -575,24 +576,24 @@ namespace Geometry{
         }
 
         // Use the graph to create a vector of seperate polygons
-        vector<vector<int>> components = graph.get_components();
-        vector<Geometry::Polygon> results;
+        std::vector<std::vector<int>> components = graph.get_components();
+        std::vector<Geometry::Polygon> results;
 
         for(int i  = 0; i < components.size(); i++){
             Geometry::Polygon curr_poly;
-            map<int, int> point_mapping;
+            std::map<int, int> point_mapping;
             // add all the points
             if(components[i].size() > 1){
                 for(int j = 0; j < components[i].size(); j++){
                     curr_poly.add_point(poly.points[components[i][j]]);
-                    point_mapping.insert(pair<int, int>(components[i][j], curr_poly.points.size()-1));
+                    point_mapping.insert(std::pair<int, int>(components[i][j], curr_poly.points.size()-1));
                 }
 
                 // copy the individual component graphs from components
                 curr_poly.create_blank_graph();
 
                 for(int j = 0; j < components[i].size(); j++){
-                    set<int>::iterator it;
+                    std::set<int>::iterator it;
                     for (it = graph.graph[components[i][j]].begin(); it != graph.graph[components[i][j]].end(); ++it)
                         curr_poly.graph.add_connection(point_mapping.find(components[i][j])->second, point_mapping.find(*it)->second, BIDIRECTIONAL);
                 }
@@ -604,11 +605,58 @@ namespace Geometry{
         return results;
     }
 
+    std::vector<Point> convex_hull(std::vector<Point> &points){
+
+        std::sort(points.begin(), points.end(), [points](Point &a, Point &b){
+           return atan2(a.x,a.y) < atan2(b.x, b.y);
+        });
+
+        int start_point_index = points.end() - std::min_element(points.begin(),points.end(), [](Point &a, Point &b){
+            if(a.y == b.y)
+                return a.x > b.x;
+            return a.y < b.y;
+        });
+
+        std::stack<int> stek;
+
+        int i = 0;
+        stek.push(start_point_index);
+
+        while(true){
+            if(i != start_point_index){
+                if(i > 2){
+                    int p1, p2, p3;
+                    p3 = stek.top(); stek.pop();
+                    p2 = stek.top(); stek.pop();
+                    p1 = stek.top();
+                    stek.push(p2);
+                    stek.push(p3);
+
+                    if(ccw(points[p1], points[p2], points[p3]) < 0){
+                        stek.pop(); stek.pop();
+                        i--;
+                    }
+                    if(i >= points.size())
+                        break;
+                }
+              stek.push(i);
+            }
+            i++;
+        }
+
+        std::vector<Point> result;
+        while(!stek.empty()){
+            result.push_back(points[stek.top()]);
+            stek.pop();
+        }
+        return result;
+    }
+
 }
 
 namespace StringProcessing{
-    vector<int> kmp_preproces(string &str){
-        vector<int> reset_table (str.length());
+    std::vector<int> kmp_preproces(std::string &str){
+        std::vector<int> reset_table (str.length());
         fill(reset_table.begin(), reset_table.end(), -1);
         int j = -1;
         for(int i = 0; i < str.length(); i=i){
@@ -620,8 +668,8 @@ namespace StringProcessing{
         }
         return reset_table;
     }
-    int kmp_find_first(string &to_read, string &to_find){
-        vector<int> reset_table = kmp_preproces(to_find);
+    int kmp_find_first(std::string &to_read, std::string &to_find){
+        std::vector<int> reset_table = kmp_preproces(to_find);
         for(int i = 0; i < to_read.size(); i++){
             int len = 0;
             int mem = i;
@@ -639,9 +687,9 @@ namespace StringProcessing{
         }
         return -1;
     }
-    vector<int> kmp_find_multiple(string &to_read, string &to_find){
-        vector<int> reset_table = kmp_preproces(to_find);
-        vector<int> found;
+    std::vector<int> kmp_find_multiple(std::string &to_read, std::string &to_find){
+        std::vector<int> reset_table = kmp_preproces(to_find);
+        std::vector<int> found;
         for(int i = 0; i < to_read.size(); i++){
             int len = 0;
             int mem = i;
@@ -667,7 +715,7 @@ namespace StringProcessing{
 
 // Solved Problems //{
 void TEST007(){
-    vector<Geometry::Point> vec = {
+    std::vector<Geometry::Point> vec = {
         Geometry::Point(1, 1),
         Geometry::Point(3, 3),
         Geometry::Point(9, 1),
@@ -677,44 +725,44 @@ void TEST007(){
     };
     Geometry::Polygon p = Geometry::Polygon(vec);
     p.log();
-    cout << p.is_point_in_polygon(Geometry::Point(2, 3)) << endl;
-    cout << p.area() << endl;
+    std::cout << p.is_point_in_polygon(Geometry::Point(2, 3)) << std::endl;
+    std::cout << p.area() << std::endl;
 }
 
 void TEST_KMP(){
-    string to_read = "I DO NOT LIKE SEVENTY SEV BUT SEVENTY SEVENTY SEVEN SEVSEVENTY SEVEN";
-    string to_find = "SEVENTY SEVEN";
-    cout << "Next line should say 30:" << endl;
-    cout << StringProcessing::kmp_find_first(to_read, to_find) << endl;
-    cout << "Next line should say 30, 38:" << endl;
-    vector<int> found = StringProcessing::kmp_find_multiple(to_read, to_find);
+    std::string to_read = "I DO NOT LIKE SEVENTY SEV BUT SEVENTY SEVENTY SEVEN SEVSEVENTY SEVEN";
+    std::string to_find = "SEVENTY SEVEN";
+    std::cout << "Next line should say 30:" << std::endl;
+    std::cout << StringProcessing::kmp_find_first(to_read, to_find) << std::endl;
+    std::cout << "Next line should say 30, 38:" << std::endl;
+    std::vector<int> found = StringProcessing::kmp_find_multiple(to_read, to_find);
     for(int i = 0; i < found.size(); i++)
-        cout << found[i] << " , ";// (i == found.size()-1) ? " " : ", ";
-    cout << endl;
+        std::cout << found[i] << " , ";// (i == found.size()-1) ? " " : ", ";
+    std::cout << std::endl;
 }
 
 void irfan_zadaca_001(){
     int n;
     double x, y;
-    cin >> n;
+    std::cin >> n;
     Geometry::Polygon poly;
     for(int i = 0; i < n; i++){
-        cin >> x >> y;
+        std::cin >> x >> y;
         poly.add_point(Geometry::Point(x, y));
     }
 
-    vector<Geometry::Polygon> polygons = Geometry::split_by_intersections(poly);
+    std::vector<Geometry::Polygon> polygons = Geometry::split_by_intersections(poly);
     for(int i = 0; i < polygons.size(); i++){
-        cout << "##############" << endl << "Polygon " << i << endl << "##############" << endl;
+        std::cout << "##############" << std::endl << "Polygon " << i << std::endl << "##############" << std::endl;
         polygons[i].log();
     }
     for(int i = 0; i < polygons.size(); i++){
-        cout << "Area of polygon " << i << ": " << polygons[i].area() << endl;
-        cout << "Perimeter of polygon " << i << ": " << polygons[i].perimeter() << endl;
+        std::cout << "Area of polygon " << i << ": " << polygons[i].area() << std::endl;
+        std::cout << "Perimeter of polygon " << i << ": " << polygons[i].perimeter() << std::endl;
     }
 
-    cout << "Enter a point you want to check" << endl;
-    cin >> x >> y;
+    std::cout << "Enter a point you want to check" << std::endl;
+    std::cin >> x >> y;
     Geometry::Point search_for = Geometry::Point(x, y);
 
     bool found = false;
@@ -725,16 +773,30 @@ void irfan_zadaca_001(){
         }
     }
     if(found)
-        cout << "Your point is somewhere in the polygon" << endl;
+        std::cout << "Your point is somewhere in the polygon" << std::endl;
     else
-        cout << "Nah, you missed" << endl;
+        std::cout << "Nah, you missed" << std::endl;
 }
 
+void TEST_CONVEX_HULL(){
+
+    std::vector<Geometry::Point> vec = {
+        Geometry::Point(1, 1),
+        Geometry::Point(3, 1),
+        Geometry::Point(2, 2),
+        Geometry::Point(3, 3),
+        Geometry::Point(1, 3)
+    };
+
+    std::vector<Geometry::Point> test = Geometry::convex_hull(vec);
+    for(int i = 0; i < test.size(); i++)
+        test[i].log();
+}
 //}
 
 int main(){
 
-    TEST_KMP();
+    TEST_CONVEX_HULL();
     return 0;
 }
 
