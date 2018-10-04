@@ -15,7 +15,7 @@
 // Defining some constants//{
 
 // Max acceptable error value
-const double EPS = 1e-5;
+const double EPS = 1e-6;
 
 // Graph direction parameters
 #define BIDIRECTIONAL true
@@ -68,7 +68,7 @@ namespace Geometry{
     double angle(Point p1, Point p2, Point p3);
     double dist_to_line_segment(Point point, Line_Segment line);
     bool is_point_on_line(Point &point, Line &line);
-    bool is_point_on_line_segment(Point point, Line_Segment ls);
+    bool is_point_on_line_segment(Point point, Line_Segment ls, bool including_endpoints = true);
     Point point_to_line_projection(Point point, Line_Segment line);
 }
 
@@ -489,13 +489,21 @@ namespace Geometry{
 
     double dist_to_line_segment(Point point, Line_Segment line){
         Point proj_tip = point_to_line_projection(point, line);
+       // proj_tip.log();
         return dist(point, proj_tip);
     }
 
     Point point_to_line_projection(Point point, Line_Segment line){
-        Vector2 vec2 = Vector2(line.a, point);
-        Vector2 vec1 = Vector2(line.a, line.b);
-        return vector_projection(vec1, vec2).get_point();
+        if(line.line.b == 0){
+            return Point(line.a.x, point.y);
+        }else if(line.line.a == 0){
+            return Point(point.x, line.a.y);
+        }
+        double a = -1/line.line.a;
+        double c = point.y - a*point.x;
+        double b = line.line.b;
+        Line l1 = Line(a, b, c);
+        return intersection(l1, line.line);
     }
 
     Vector2 vec_abs(Vector2 &vec){
@@ -801,19 +809,32 @@ void TEST_CONVEX_HULL(){
         test[i].log();
 }
 
+void TEST_VECTOR_PROJECTION(){
+    Geometry::Vector2 vec1 = Geometry::Vector2(1,1);
+    Geometry::Vector2 vec2 = Geometry::Vector2(2,0);
+    Geometry::vector_projection(vec1, vec2).log();
+    Geometry::vector_projection(vec2, vec1).log();
+}
+
+void TEST_DIST_TO_LINE_SEGMENT(){
+    Geometry::Line_Segment ls = Geometry::Line_Segment(Geometry::Point(5, 5), Geometry::Point(9,-5));
+    Geometry::Point M = Geometry::Point(6, -3);
+    std::cout << dist_to_line_segment(M, ls) << std::endl;
+}
+
 void uva_00920(){
     int test_cases;
     std::cin >> test_cases;
     for(int test_case = 0; test_case < test_cases; test_case++){
-        int n;
+        int n, x, y;
         std::cin >> n;
         Geometry::Point points[n];
-        int x, y;
 
         for(int i = 0; i < n; i++){
             std::cin >> x >> y;
             points[i] = Geometry::Point(x, y);
         }
+
         std::sort(points, points + n, [](Geometry::Point &a, Geometry::Point &b){
             return a.x < b.x;
         });
@@ -832,11 +853,53 @@ void uva_00920(){
     }
 }
 
+void uva_10263(){
+    int x, y, n;
+    while(std::cin >>x){
+        std::cin >> y;
+        std::cin >> n;
+        Geometry::Point M = Geometry::Point(x, y);
+        Geometry::Point points[n];
+        for(int i = 0; i <= n; i++){
+            std::cin >> x >> y;
+            points[i] = Geometry::Point(x, y);
+        }
+        double min = DBL_MAX;
+        Geometry::Point min_point = Geometry::Point(666,666);
+        for(int i = 1; i <= n; i++){
+            Geometry::Line_Segment ls;
+            ls = Geometry::Line_Segment(points[i-1], points[i]);
+            Geometry::Point closest = Geometry::point_to_line_projection(M, ls);
+            if(!closest.is_null() && Geometry::is_point_on_line_segment(closest, ls)){
+                double dist = Geometry::dist(M, closest);
+                if(dist <= min){
+                    min = dist;
+                    min_point = closest;
+                }
+            }else{
+                double dist_a = Geometry::dist(ls.a, M);
+                double dist_b = Geometry::dist(ls.b, M);
+                if(dist_a < min){
+                    min = dist_a;
+                    min_point = ls.a;
+                }
+                if(dist_b < min){
+                    min = dist_b;
+                    min_point = ls.b;
+                }
+            }
+        }
+        std::cout << std::fixed << std::setprecision(4) << min_point.x << std::endl << min_point.y << std::endl;
+    }
+}
+
 //}
 
 int main(){
 
-    uva_00920();
+    uva_10263();
+    //TEST_VECTOR_PROJECTION();
+    //TEST_DIST_TO_LINE_SEGMENT();
     return 0;
 }
 
