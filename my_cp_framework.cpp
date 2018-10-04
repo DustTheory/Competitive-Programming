@@ -597,7 +597,7 @@ namespace Geometry{
 
         for(int i  = 0; i < components.size(); i++){
             Geometry::Polygon curr_poly;
-            std::map<int, int> point_mapping;
+           std::map<int, int> point_mapping;
             // add all the points
             if(components[i].size() > 1){
                 for(int j = 0; j < components[i].size(); j++){
@@ -606,14 +606,11 @@ namespace Geometry{
                 }
 
                 // copy the individual component graphs from components
-                curr_poly.create_blank_graph();
-
                 for(int j = 0; j < components[i].size(); j++){
                     std::set<int>::iterator it;
                     for (it = graph.graph[components[i][j]].begin(); it != graph.graph[components[i][j]].end(); ++it)
                         curr_poly.graph.add_connection(point_mapping.find(components[i][j])->second, point_mapping.find(*it)->second, BIDIRECTIONAL);
                 }
-
                 results.push_back(curr_poly);
             }
         }
@@ -897,10 +894,5 @@ void uva_10263(){
 //}
 
 int main(){
-
-    uva_10263();
-    //TEST_VECTOR_PROJECTION();
-    //TEST_DIST_TO_LINE_SEGMENT();
     return 0;
 }
-
