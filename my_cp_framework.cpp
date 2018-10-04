@@ -9,7 +9,7 @@
 #include <map>
 #include <stack>
 #include <queue>
-
+#include <iomanip>
 /// Spaghetti code by DE5C3NDER(Ishak Dervisevic)
 
 // Defining some constants//{
@@ -69,6 +69,7 @@ namespace Geometry{
     double dist_to_line_segment(Point point, Line_Segment line);
     bool is_point_on_line(Point &point, Line &line);
     bool is_point_on_line_segment(Point point, Line_Segment ls);
+    Point point_to_line_projection(Point point, Line_Segment line);
 }
 
 namespace Graph{
@@ -244,6 +245,9 @@ namespace Geometry{
         }
         double f(double _x){
             return _x*a + c;
+        }
+        double f_reverse(double _y){
+            return (_y-c)/a;
         }
         bool operator == (Line other){
             return are_paralel(*this, other) && c == other.c;
@@ -484,10 +488,14 @@ namespace Geometry{
     }
 
     double dist_to_line_segment(Point point, Line_Segment line){
+        Point proj_tip = point_to_line_projection(point, line);
+        return dist(point, proj_tip);
+    }
+
+    Point point_to_line_projection(Point point, Line_Segment line){
         Vector2 vec2 = Vector2(line.a, point);
         Vector2 vec1 = Vector2(line.a, line.b);
-        Point proj_tip = vector_projection(vec1, vec2).get_point();
-        return dist(point, proj_tip);
+        return vector_projection(vec1, vec2).get_point();
     }
 
     Vector2 vec_abs(Vector2 &vec){
@@ -792,11 +800,43 @@ void TEST_CONVEX_HULL(){
     for(int i = 0; i < test.size(); i++)
         test[i].log();
 }
+
+void uva_00920(){
+    int test_cases;
+    std::cin >> test_cases;
+    for(int test_case = 0; test_case < test_cases; test_case++){
+        int n;
+        std::cin >> n;
+        Geometry::Point points[n];
+        int x, y;
+
+        for(int i = 0; i < n; i++){
+            std::cin >> x >> y;
+            points[i] = Geometry::Point(x, y);
+        }
+        std::sort(points, points + n, [](Geometry::Point &a, Geometry::Point &b){
+            return a.x < b.x;
+        });
+
+        Geometry::Point max_point;
+        double sum = 0;
+        for(int i = n-2; i >= 0; i--){
+            if(points[i].y > max_point.y){
+                Geometry::Line slope = Geometry::Line(points[i+1], points[i]);
+                Geometry::Point point = Geometry::Point(slope.f_reverse(max_point.y), max_point.y);
+                sum += Geometry::dist(point, points[i]);
+                max_point = points[i];
+            }
+        }
+        std::cout << std::fixed << std::setprecision(2) <<sum << std::endl;
+    }
+}
+
 //}
 
 int main(){
 
-    TEST_CONVEX_HULL();
+    uva_00920();
     return 0;
 }
 
