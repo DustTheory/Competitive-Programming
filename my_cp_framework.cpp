@@ -854,8 +854,9 @@ void uva_00920(){
 }
 
 void uva_10263(){
-    int x, y, n;
-    while(std::cin >>x){
+    double x, y;
+    while(std::cin >> x){
+        int n;
         std::cin >> y;
         std::cin >> n;
         Geometry::Point M = Geometry::Point(x, y);
@@ -865,14 +866,14 @@ void uva_10263(){
             points[i] = Geometry::Point(x, y);
         }
         double min = DBL_MAX;
-        Geometry::Point min_point = Geometry::Point(666,666);
+        Geometry::Point min_point = Geometry::Point(0,0);
         for(int i = 1; i <= n; i++){
             Geometry::Line_Segment ls;
             ls = Geometry::Line_Segment(points[i-1], points[i]);
             Geometry::Point closest = Geometry::point_to_line_projection(M, ls);
             if(!closest.is_null() && Geometry::is_point_on_line_segment(closest, ls)){
                 double dist = Geometry::dist(M, closest);
-                if(dist <= min){
+                if(dist < min){
                     min = dist;
                     min_point = closest;
                 }
