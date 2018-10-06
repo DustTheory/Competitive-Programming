@@ -997,9 +997,32 @@ void irfan_klub_001(){
     std::cout << sum << std::endl;
 }
 
+void uva_00902(){
+    int n;
+    std::string s;
+    while(std::cin >> n >> s){
+        std::map<std::string, int> map;
+        if(s.length() <= n)
+            std::cout << s << std::endl;
+        else{
+            for(int i = 0; i < s.size()-n; i++){
+                std::string tmp = "";
+                for(int j = 0; j < n; j++){
+                    tmp += s[i+j];
+                }
+                auto ret = map.insert(std::pair<std::string, int>(tmp,1));
+                if (ret.second == false)
+                    ret.first->second += 1;
+            }
+            auto max = std::max_element(map.begin(), map.end(), [](std::pair<std::string, int> a,std::pair<std::string, int> b){
+                return a.second < b.second;
+            });
+        std::cout << max->first << std::endl;
+        }
+    }
+}
 //}
 
 int main(){
-    irfan_klub_001();
     return 0;
 }
