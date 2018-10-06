@@ -10,6 +10,7 @@
 #include <stack>
 #include <queue>
 #include <iomanip>
+#include <bitset>
 /// Spaghetti code by DE5C3NDER(Ishak Dervisevic)
 
 // Defining some constants//{
@@ -668,6 +669,31 @@ namespace Geometry{
 }
 
 namespace StringProcessing{
+    struct suffix_tree{
+        bool parent;
+        suffix_tree* verticies[26];
+        suffix_tree(bool _parent = true){
+            parent = _parent;
+            std::fill(verticies, verticies+26, nullptr);
+        }
+        void add_word(std::string &word, int pos = 0){
+            if(pos >= word.length())
+                return;
+            if(verticies[word[pos]-'a'] == nullptr)
+                verticies[word[pos]-'a'] = new suffix_tree(false);
+            verticies[word[pos]-'a']->add_word(word, pos+1);
+        }
+        void log(int level = 0){
+            for(int i = 0; i < 26; i++){
+                if(verticies[i] != nullptr){
+                    for(int j = 0; j < level; j++)
+                        std::cout << "    ";
+                    std::cout << (char)('a'+i) << std::endl;
+                    verticies[i]->log(level+1);
+                }
+            }
+        }
+    };
     std::vector<int> kmp_preproces(std::string &str){
         std::vector<int> reset_table (str.length());
         fill(reset_table.begin(), reset_table.end(), -1);
@@ -891,9 +917,19 @@ void uva_10263(){
     }
 }
 
+void TEST_TRIE(){
+    std::string a = "ishak";
+    std::string b = "ishrana";
+    std::string c = "pohrana";
+    StringProcessing::suffix_tree trie;
+    trie.add_word(a);
+    trie.add_word(b);
+    trie.add_word(c);
+    trie.log();
+}
 //}
 
 int main(){
-    TEST_KMP();
+
     return 0;
 }
