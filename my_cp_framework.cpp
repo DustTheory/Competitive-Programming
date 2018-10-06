@@ -11,6 +11,7 @@
 #include <queue>
 #include <iomanip>
 #include <bitset>
+
 /// Spaghetti code by DE5C3NDER(Ishak Dervisevic)
 
 // Defining some constants//{
@@ -179,6 +180,40 @@ namespace Graph{
         }
     };
     struct Edge_List{};
+    struct Binary_Search_Tree{
+        int value;
+        Binary_Search_Tree* left_child;
+        Binary_Search_Tree*  right_child;
+        Binary_Search_Tree(){
+            value = NULL;
+            left_child = nullptr;
+            right_child = nullptr;
+        }
+        void add_number(int number){
+            if(value == NULL){
+                value = number;
+                return;
+            }
+            if(number < value){
+                if(left_child == nullptr)
+                    left_child = new Binary_Search_Tree();
+                left_child->add_number(number);
+            }else if(number > value){
+                if(right_child == nullptr)
+                    right_child = new Binary_Search_Tree();
+                right_child->add_number(number);
+            }
+        }
+        void log(int level = 0){
+            for(int  i = 0; i < level; i++)
+                std::cout << "    ";
+            std::cout << value << std::endl;
+            if(left_child != nullptr)
+                left_child->log(level+1);
+            if(right_child != nullptr)
+                right_child->log(level+1);
+        }
+    };
 }
 
 namespace Geometry{
@@ -927,9 +962,17 @@ void TEST_TRIE(){
     trie.add_word(c);
     trie.log();
 }
+
+void TEST_BST(){
+    Graph::Binary_Search_Tree bst;
+    bst.add_number(2);
+    bst.add_number(1);
+    bst.add_number(3);
+    bst.log();
+}
+
 //}
 
 int main(){
-
     return 0;
 }
