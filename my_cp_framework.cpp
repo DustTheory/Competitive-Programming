@@ -805,6 +805,52 @@ namespace StringProcessing{
         return found;
     }
 }
+
+struct disjoint_set{
+    std::vector<int> parent;
+    disjoint_set(int size){
+        for(int i = 0; i < size; i++)
+            parent.push_back(i);
+    }
+
+    int parent_of(int x){
+        int curr = x;
+        while(curr != parent[curr]){
+            curr = parent[curr];
+        }
+        return curr;
+    }
+
+    void join(int a, int b){
+        parent[parent_of(b)] = a;
+    }
+
+    bool same_parent(int a, int b){
+        return parent_of(a) == parent_of(b);
+    }
+
+    void path_compression(){
+        std::stack<int> cigare;
+        for(int i = 0; i < parent.size(); i++){
+            cigare.push(i);
+
+            while(parent[cigare.top()] != cigare.top())
+                cigare.push(parent[cigare.top()]);
+
+            int big_daddy = cigare.top();
+            while(!cigare.empty()){
+                parent[cigare.top()] = big_daddy;
+                cigare.pop();
+            }
+        }
+    }
+
+    void log(){
+        for(int i = 0; i < parent.size(); i++)
+            std::cout << parent[i] << ' ';
+        std::cout << std::endl;
+    }
+};
 //}
 
 // Solved Problems //{
@@ -1098,9 +1144,19 @@ void uva_10927(){
     }
 }
 
+void TEST_DISJOINT_SET(){
+    disjoint_set uf = disjoint_set(5);
+    uf.join(1, 2);
+    uf.join(3, 4);
+    uf.join(2, 3);
+    uf.log();
+    std::cout << "KEK" << std::endl;
+    uf.path_compression();
+    uf.log();
+}
+
 //}
 
 int main(){
-    uva_10927();
     return 0;
 }
