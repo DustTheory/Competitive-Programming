@@ -11,6 +11,7 @@
 #include <queue>
 #include <iomanip>
 #include <bitset>
+#include <utility>
 
 /// Spaghetti code by DE5C3NDER(Ishak Dervisevic)
 
@@ -701,6 +702,25 @@ namespace Geometry{
         return result;
     }
 
+    int quadrant(Point a){
+        if(a.x > 0 && a.y > 0)
+            return 1;
+        if(a.x < 0 && a.y > 0)
+            return 2;
+        if(a.x < 0 && a.y < 0)
+            return 3;
+        if(a.x > 0 && a.y < 0)
+            return 4;
+        if(a.x <= 0 && a.y == 0)
+            return 5;
+        if(a.x > 0 && a.y == 0)
+            return 6;
+        if(a.y <= 0 && a.x == 0)
+            return 7;
+        if(a.y > 0 && a.x == 0)
+            return 8;
+        return 9;
+    }
 }
 
 namespace StringProcessing{
@@ -1021,8 +1041,66 @@ void uva_00902(){
         }
     }
 }
+
+void uva_10927(){
+    int n;
+    int cnt = 0;
+    while(true){
+        cnt++;
+        std::cin >> n;
+        if(n == 0)
+            break;
+        int x, y, z;
+        std::vector<std::pair<Geometry::Point, int>> poles;
+        for(int i = 0; i < n; i++){
+            std::cin >> x >> y >> z;
+            poles.push_back(std::pair<Geometry::Point, int> (Geometry::Point(x, y), z));
+        }
+        Geometry::Point T = Geometry::Point(0, 0);
+        std::vector<Geometry::Point> hidden;
+        bool mem[n];
+        std::fill(mem, mem+n, false);
+        for(int i = 0; i < n; i++){
+            if(!mem[i])
+                for(int j = i+1; j < n; j++){
+                        if(!mem[j]){
+                            double ccw = Geometry::ccw(poles[i].first, poles[j].first, T) ;
+                            if(ccw == 0 || ccw == -0){
+                                   if(Geometry::dist_nosqrt(poles[i].first, T) < Geometry::dist_nosqrt(poles[j].first, T) && Geometry::quadrant(poles[i].first) == Geometry::quadrant(poles[j].first)){
+                                        if(poles[j].second <= poles[i].second){
+                                            hidden.push_back(poles[j].first);
+                                            mem[j] = true;
+                                        }
+                                   }else if(!mem[i] && Geometry::quadrant(poles[i].first) == Geometry::quadrant(poles[j].first)){
+                                        if(poles[i].second <= poles[j].second){
+                                            hidden.push_back(poles[i].first);
+                                            mem[i] = true;
+                                        }
+                                   }
+                        }
+                    }
+                }
+        }
+        std::sort(hidden.begin(), hidden.end(), [](Geometry::Point &a, Geometry::Point &b){
+            if(a.x == b.x)
+                return a.y < b.y;
+            return a.x < b.x;
+        });
+        std::cout << "Data set " << cnt << ":" << std::endl;
+        if(hidden.size() == 0)
+            std::cout << "All the lights are visible." << std::endl;
+        else{
+            std::cout << "Some lights are not visible:" << std::endl;
+            for(int i = 0; i < hidden.size(); i++){
+                std::cout << "x = " << (int)hidden[i].x << ", y = " << (int)hidden[i].y << (i == hidden.size()-1 ? "." : ";") << std::endl;
+            }
+        }
+    }
+}
+
 //}
 
 int main(){
+    uva_10927();
     return 0;
 }
