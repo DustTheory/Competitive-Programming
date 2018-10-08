@@ -1155,8 +1155,52 @@ void TEST_DISJOINT_SET(){
     uf.log();
 }
 
+void uva_00793(){
+    int test_cases;
+    std::cin >> test_cases;
+    for(int tc = 0; tc < test_cases; tc++){
+        int computers;
+        std::cin >> computers;
+        disjoint_set uf = disjoint_set(computers+1);
+        char query;
+        int c1, c2;
+        int successful = 0, unsuccessful = 0; 
+        std::cin.ignore();
+        int cnt = 0;
+        while(1){
+            //std::cout << i << std::endl;
+        //    std::cin >> query >> c1 >> c2;
+            std::string input;
+            std::getline(std::cin, input);
+            if(input.length() == 0)
+                break;
+            sscanf(input.c_str(), "%c %d %d\n", &query, &c1, &c2);
+            if(query == 'c'){
+                uf.join(c1, c2);
+                cnt++;
+                if(cnt == 10){
+                  uf.path_compression();
+                  cnt = 0;
+                  }
+            }
+            else if(uf.same_parent(c1,c2))
+                successful++;
+            else
+                unsuccessful++;
+            if(std::cin.eof())
+                break;
+        }
+
+		std::cout << successful << ',' << unsuccessful << std::endl;
+		if(tc != test_cases-1)
+			std::cout << std::endl;
+
+    }
+}
+
 //}
 
 int main(){
+    uva_00793();
     return 0;
 }
