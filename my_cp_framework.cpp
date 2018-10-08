@@ -808,21 +808,39 @@ namespace StringProcessing{
 
 struct disjoint_set{
     std::vector<int> parent;
+    std::vector<int> rank;
     disjoint_set(int size){
         for(int i = 0; i < size; i++)
             parent.push_back(i);
+            rank.push_back(0);
     }
 
     int parent_of(int x){
         int curr = x;
+        std::stack<int> cigare;
         while(curr != parent[curr]){
+            cigare.push(curr);
             curr = parent[curr];
         }
+        while(!cigare.empty()){
+            parent[cigare.top()] = curr;
+            cigare.pop();
+       }
         return curr;
     }
 
     void join(int a, int b){
-        parent[parent_of(b)] = a;
+        int parent_a = parent_of(a);
+        int parent_b = parent_of(b);
+
+        if(rank[a] > rank[b]){
+            parent[parent_a] = parent_b;
+        }else{
+            parent[parent_b] = parent_a;
+            if(rank[a] == rank[b])
+                rank[parent_b]++;
+        }
+
     }
 
     bool same_parent(int a, int b){
@@ -1164,9 +1182,9 @@ void uva_00793(){
         disjoint_set uf = disjoint_set(computers+1);
         char query;
         int c1, c2;
-        int successful = 0, unsuccessful = 0; 
+        int successful = 0, unsuccessful = 0;
         std::cin.ignore();
-        int cnt = 0;
+      //  int cnt = 0;
         while(1){
             //std::cout << i << std::endl;
         //    std::cin >> query >> c1 >> c2;
@@ -1177,11 +1195,11 @@ void uva_00793(){
             sscanf(input.c_str(), "%c %d %d\n", &query, &c1, &c2);
             if(query == 'c'){
                 uf.join(c1, c2);
-                cnt++;
-                if(cnt == 10){
-                  uf.path_compression();
-                  cnt = 0;
-                  }
+           //     cnt++;
+             //   if(cnt == 10){
+             //     uf.path_compression();
+              //    cnt = 0;
+              //    }
             }
             else if(uf.same_parent(c1,c2))
                 successful++;
