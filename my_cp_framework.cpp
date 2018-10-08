@@ -29,6 +29,7 @@ const double EPS = 1e-6;
 //}
 
 // Forward declarations wooohooo //{
+void io_boost();
 bool __are_equal(double a, double b);
 
 namespace Geometry{
@@ -73,24 +74,34 @@ namespace Geometry{
     bool is_point_on_line(Point &point, Line &line);
     bool is_point_on_line_segment(Point point, Line_Segment ls, bool including_endpoints = true);
     Point point_to_line_projection(Point point, Line_Segment line);
+    std::vector<Point> convex_hull(std::vector<Point> &points);
+    std::vector<Polygon> split_by_intersections(Polygon poly);
+    int quadrant(Point a);
 }
 
 namespace Graph{
     struct Adjacency_List;
     struct Adjacency_Matrix;
     struct Edge_List;
+    struct Binary_Search_Tree;
 }
 
 namespace StringProcessing{
-    struct Trie;
+    struct suffix_tree;
     std::vector<int> kmp_preproces(std::string &str);
     int kmp_find_first(std::string &to_read, std::string &to_find);
     std::vector<int> kmp_find_multiple(std::string &to_read, std::string &to_find);
 }
 
+struct disjoint_set;
+
 //}
 
 // Actual framework //{
+void io_boost(){
+    std::ios_base::sync_with_stdio(false);
+}
+
 bool __are_equal(double a, double b){
     return fabs(a-b) < EPS;
 }
@@ -808,11 +819,12 @@ namespace StringProcessing{
 
 struct disjoint_set{
     std::vector<int> parent;
-    std::vector<int> rank;
+    std::vector<int> ranks;
     disjoint_set(int size){
-        for(int i = 0; i < size; i++)
+        for(int i = 0; i <= size; i++){
             parent.push_back(i);
-            rank.push_back(0);
+            ranks.push_back(0);
+        }
     }
 
     int parent_of(int x){
@@ -832,13 +844,16 @@ struct disjoint_set{
     void join(int a, int b){
         int parent_a = parent_of(a);
         int parent_b = parent_of(b);
+        if(parent_a == parent_b)
+            return;
+        if(ranks[parent_a] > ranks[parent_b]){
 
-        if(rank[a] > rank[b]){
-            parent[parent_a] = parent_b;
-        }else{
             parent[parent_b] = parent_a;
-            if(rank[a] == rank[b])
-                rank[parent_b]++;
+        }else{
+            parent[parent_a] = parent_b;
+            if(ranks[parent_a] == ranks[parent_b]){
+                ranks[parent_b] += 1;
+            }
         }
 
     }
@@ -1163,10 +1178,11 @@ void uva_10927(){
 }
 
 void TEST_DISJOINT_SET(){
-    disjoint_set uf = disjoint_set(5);
+    disjoint_set uf = disjoint_set(10);
     uf.join(1, 2);
-    uf.join(3, 4);
-    uf.join(2, 3);
+    uf.join(3, 2);
+    uf.join(4, 5);
+    uf.join(1, 4);
     uf.log();
     std::cout << "KEK" << std::endl;
     uf.path_compression();
@@ -1219,6 +1235,7 @@ void uva_00793(){
 //}
 
 int main(){
+    io_boost();
     uva_00793();
     return 0;
 }
