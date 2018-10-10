@@ -1,25 +1,3 @@
-#include <iostream>
-#include <complex>
-#include <math.h>
-#include <limits.h>
-#include <float.h>
-#include <vector>
-#include <algorithm>
-#include <set>
-#include <map>
-#include <stack>
-#include <queue>
-#include <iomanip>
-#include <bitset>
-#include <utility>
-#include "ForwardDeclarations.h"
-#include "Graph.h"
-#include "Geometry.h"
-#include "StringProcessing.h"
-#include "Misc.h"
-
-/// Spaghetti code by DE5C3NDER(Ishak Dervisevic)
-
 
 void uva_11503(){
     int test_cases;
@@ -401,11 +379,4 @@ void uva_00793(){
 			std::cout << std::endl;
 
     }
-}
-
-
-int main(){
-    io_boost();
-    uva_11503();
-    return 0;
 }
