@@ -1,0 +1,42 @@
+# depslib dependency file v1.0
+1539366606 source:/home/ieexmml/Documents/Competitive-Programming/main.cpp
+
+1539202500 /home/ieexmml/Documents/Competitive-Programming/cpp_framework.h
+	<iostream>
+	<complex>
+	<math.h>
+	<limits.h>
+	<float.h>
+	<vector>
+	<algorithm>
+	<set>
+	<map>
+	<stack>
+	<queue>
+	<iomanip>
+	<bitset>
+	<utility>
+	"ForwardDeclarations.h"
+	"Graph.h"
+	"Geometry.h"
+	"StringProcessing.h"
+	"Misc.h"
+
+1539202055 /home/ieexmml/Documents/Competitive-Programming/ForwardDeclarations.h
+
+1539273519 /home/ieexmml/Documents/Competitive-Programming/Graph.h
+
+1539202122 /home/ieexmml/Documents/Competitive-Programming/Geometry.h
+
+1539202120 /home/ieexmml/Documents/Competitive-Programming/StringProcessing.h
+
+1539202120 /home/ieexmml/Documents/Competitive-Programming/Misc.h
+
+1539370247 source:/home/ieexmml/Documents/Competitive-Programming/Problems/UVa_11906.cpp
+	<iostream>
+	<vector>
+	<algorithm>
+	<set>
+	<utility>
+	<stack>
+
