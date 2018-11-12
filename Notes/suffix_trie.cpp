@@ -7,6 +7,7 @@ using namespace std;
 
 struct node{
 	map<char, node*> children;
+	int leaves_under;
 	node(){};
 	node* add_child(char c){
 		return children.insert(pair<char, node*>(c, new node())).first->second;
@@ -16,6 +17,15 @@ struct node{
 		if(child == children.end())
 			return NULL;
 		return child->second;
+	}
+	void update_leaves_under(int lu = 0){
+	    leaves_under = lu;
+	    if(get_child('$') != NULL)
+	        leaves_under++;
+	    cout << leaves_under << endl;
+	    for(auto child : children){
+	        child.second->update_leaves_under(leaves_under);
+	    }
 	}
 	void log(int level = 0){
 		for(auto child: children){
@@ -57,28 +67,51 @@ class Suffix_trie{
 		void log_tree(){
 			root_node.log();
 		}
-		bool is_substring(string s){
-			node* curr_node = &root_node;
+        		
+        node* find_substring(string s){
+            node* curr_node = &root_node;
 			for(int i = 0; i < s.length(); i++){
 				curr_node = curr_node->get_child(s[i]);
 				if(curr_node == NULL)
-					return false;
+					return curr_node;
 			}
-			return true;
+			return curr_node;
+        }
+        
+		bool is_substring(string s){
+			return find_substring(s) != NULL;
 		}
 		bool is_suffix(string s){
-			node* curr_node = &root_node;
-			for(int i = 0; i < s.length(); i++){
-				curr_node = curr_node->get_child(s[i]);
-				if(curr_node == NULL)
-					return false;
-			}
-			return curr_node->get_child('$') != NULL;
+		    node* leaf = find_substring(s);
+			return leaf != NULL && leaf->get_child('$') != NULL;
 		}
+		
 		int count(string s){
-				
+            root_node.update_leaves_under();
+			node* end = find_substring(s);
+			if(end == NULL)
+			    return 0;
+			return end->leaves_under;
 		}
-
+        string lexicographically_smallest_string(){
+            node* curr_node = &root_node;
+            string str = "";
+            while(1){
+                bool found = false;
+                for(auto child : curr_node->children){
+                    if(child.first != '$'){
+                        curr_node = child.second;
+                        str += child.first;
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found){
+                    break;
+                }
+            }
+            return str;
+        }
 };
 
 int main(){
@@ -87,5 +120,5 @@ int main(){
 	st.log_tree();
 	cout << st.is_substring("baa") << endl;
 	cout << st.is_suffix("abaab") << endl;
-
+    cout << st.lexicographically_smallest_string() << endl;
 }
