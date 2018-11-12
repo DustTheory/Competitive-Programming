@@ -41,11 +41,12 @@ struct node{
 // Implemented: building the trie, loggingi
 // 	Check whether string is a substring of trie
 // 	Check whether string is a suffix of trie
+// 	Find the lexicographically first suffix
+// 	Count the number of occurences of string in trie
 //
 // To be implemented:
-// 	Count the number of occurences of string in trie
 // 	Find the longest repeat in trie
-// 	Find the lexicographically first suffix
+
 
 class Suffix_trie{
 	private:
