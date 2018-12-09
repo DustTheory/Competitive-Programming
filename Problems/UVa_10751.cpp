@@ -1,24 +1,23 @@
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
+#define sqrt2 1.41421356237
+
 double solve(int n){
-    double res = 0;
-    int squares = n*n;
-    int turns = 3;
-    if(n % 2 == 0){
-        turns += max(0,(n-2)*2);
-    }else{
-        turns += max(0,(n-3)*2);
-        squares -= (n-2);
-    }
-    cout << squares << endl;
-    cout << turns << endl;
-    return 0;
+    if(n == 1)
+        return 0;
+    int diagonals = (n-2)*(n-2);
+    return n*n - diagonals + diagonals*sqrt2;
 }
 
 int main(){
-    int n;
-    cin >> n;
-    cout << solve(n) << endl;
+    int t, n;
+    cin >> t;
+    for(int i = 0; i < t; i++){
+        cin >> n;
+        cout << fixed << setprecision(3) << solve(n) << (i != t-1 ? "\n" : "") << endl;
+    }
 }
+
