@@ -4,69 +4,60 @@
 
 using namespace std;
 
-bool sieve[2000000000] = {};
+vector<int> humble;
 
-void create_sieve(){
-    for(int i = 2; i < sqrt(2000000000); i++){
-        if(!sieve[i])
-            for(int j = i*2; j < 2000000000; j += i){
-                sieve[j] = true;
-            }
-    }
+int i2, i3, i5, i7 = i5 = i3 = i2 = 0;
+int next2 = 2, next3 = 3, next5 = 5, next7 = 7;
+int i = 1;
+void init_humble(){
+    humble.clear();
+    humble.push_back(1);
 }
 
-bool is_prime(int n){
-    return !sieve[n];
+int min(int a, int b, int c, int d){
+    return min(a, min(b, min(c, d)));
 }
 
-bool is_humble(int n){
-    if(n <= 10)
-        return true;
-    if(is_prime(n))
-        return false;
-    for(int i = 2; i < n; i++){
-        if(n % i == 0 && is_prime(i)){
-            if(i != 2 && i != 3 && i != 5 && i != 7)
-                return false;
+void generate_humble(int n){
+    for(i; i < n; i++){
+        int next = min(next2, next3, next5, next7);
+        humble.push_back(next);
+        if(next == next2){
+            i2++;
+            next2 = humble[i2]*2;
+        }
+        if(next == next3){
+            i3++;
+            next3 = humble[i3]*3;
+        }
+        if(next == next5){
+            i5++;
+            next5 = humble[i5]*5;
+        }
+        if(next == next7){
+            i7++;
+            next7 = humble[i7]*7;
         }
     }
-    return true;
-}
-
-vector<int> humble_nums;
-
-void generate_humble(){
-    int cnt = 0, i = 0;
-    cout << '{';
-    while(cnt < 5842){
-        i++;
-        if(is_humble(i)){
-            cout << i << ',';
-        }
-    }
-    cout << '}';
 }
 
 int main(){
-  //  create_sieve();
-  //  generate_humble();
-    ios_base::sync_with_stdio(false);
-    for(int i = 1; i < 5842; i++){
-        cout << i << endl;
-    }
+    init_humble();
     int n;
-   /* while(1){
+    while(1){
         cin >> n;
         if(n == 0)
             break;
+        generate_humble(n);
         char* suffix = "th";
-        if(n%10 == 1)
-            suffix = "st";
-        else if(n%10 == 2)
-            suffix = "nd";
-        else if(n%10 == 3)
-            suffix = "rd";
-        printf("The %d%s humble number is %d.\n", n, suffix, humble_nums[n]);
-    }*/
+        if((n/10)%10 != 1)
+            if(n%10 == 1)
+                suffix = "st";
+            else if(n%10 == 2)
+                suffix = "nd";
+            else if(n%10 == 3)
+                suffix = "rd";
+        printf("The %d%s humble number is %d.\n", n, suffix, humble[n-1]);
+    }
     return 0;
 }
