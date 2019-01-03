@@ -47,6 +47,13 @@ class BigInteger{
         return number;
 	}
 
+	short mod2(){
+        if(is_zero())
+            return 0;
+        short last_digit = number[number.length()-1]-'0';
+        return (10+last_digit)%2;
+	}
+
 	bool is_zero() const{
         return number == "0";
 	}
@@ -299,14 +306,18 @@ class BigInteger{
     }
 };
 
+
 int main(){
     BigInteger a, b;
     while(cin >> a >> b){
         BigInteger i;
         BigInteger result;
         result = 0;
+        BigInteger pow;
+        pow = b;
         for(i = 1; i <= a; i++){
-            result += i*b.pow(i);
+            result += i*pow;
+            pow = pow * b;
         }
         cout << result << endl;
     }
