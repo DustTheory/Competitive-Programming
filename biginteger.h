@@ -47,6 +47,13 @@ class BigInteger{
         return number;
 	}
 
+	short mod2(){
+        if(is_zero())
+            return 0;
+        short last_digit = number[number.length()-1]-'0';
+        return (10+last_digit)%2;
+	}
+
 	bool is_zero() const{
         return number == "0";
 	}
