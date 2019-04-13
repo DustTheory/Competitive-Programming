@@ -1,80 +1,91 @@
 #include <iostream>
-#include <sstream>
-#include <map>
-#include <vector>
-#include <set>
-#include <utility>
 #include <stdio.h>
+#include <sstream>
+#include <vector>
+#include <map>
+#include <utility>
 
 using namespace std;
 
-int s, f;
+#define INF 1<<29
 
-#define INVALIDSTR "THIS STRING IS INVALID"
+int sn, fm;
 
-struct Tree{
-    map<string, string> parent;
-    string master;
-    Tree(){
-        master = INVALIDSTR;
-    };
-    void add(string p, string c){
-        parent[c] = p;
-        if(master == INVALIDSTR)
-            master = p;
+struct node{
+    string name;
+    vector<node*> children;
+    int S, F;
+    node(string name) : name(name), S(INF), F(INF) {
+
     }
-    bool exists(string c){
-        return parent.find(c) != parent.end();
+    void add_child(node* child){
+        children.push_back(child);
     }
-    string get_master(){
-        if(master == INVALIDSTR)
-            return INVALIDSTR;
-        while(parent[master] != master){
-            master = parent[master];
+    void log_tree(int level = 0){
+        for(int i = 0; i < level; i++)
+            cout << "\t";
+        printf("%s %d %d \n", name.c_str(), S, F);
+        for(int i = 0; i < children.size(); i++)
+            children[i]->log_tree(level+1);
+    }
+
+    int min_subtree_size(){
+        S = sn;
+        for(int i = 0; i < children.size(); i++)
+            S += children[i]->min_subtree_size();
+        F = fm;
+        for(int i = 0; i < children.size(); i++){
+            for(int j = 0; j < children[i]->children.size(); j++){
+                F += children[i]->children[j]->min_subtree_size();
+            }
         }
-        return master;
-    }
-    void clear(){
-        parent.clear();
+        return min(S, F);
     }
 };
 
-Tree tree;
+map<string, node*> people;
 
-void solve(){
-    cout << s << ' ' << f << endl;
-    cout << tree.get_master() << endl;
-    return;
+string find_root_name(){
+    map<string, int> n_parents;
+    for(map<string, node*>::iterator it = people.begin(); it != people.end(); ++it){
+        for(int i = 0; i > it->second->children.size(); i++){
+            n_parents[it->second->children[i]->name]++;
+        }
+    }
+    for(map<string, node*>::iterator it = people.begin(); it != people.end(); ++it){
+        if(n_parents[it->first] == 0)
+            return it->first;
+    }
+    return "NO_ROOT?";
 }
 
 int main(){
+    string s;
+    cin >> sn >> fm;
+    cin.ignore();
+    while(true){
+        getline(cin , s);
+        if(s[0] == 'B')
+            break;
+        if(cin.eof())
+            break;
+        char c_parent[1010];
+        sscanf(s.c_str(), "%s", c_parent);
 
-    string st;
-    getline(cin, st);
-    bool first = true;
-    for(;;){
-        if(!first){
-            if(st[0] >= '0' && st[0] <= '9'){
-                solve();
-                sscanf(st.c_str(), "%d %d", &s, &f);
-                if(s == 0 && f == 0)
-                    break;
-                tree.clear();
-            }else{
-                stringstream ss(st);
-                string tmp, father;
-                ss >> father;
-                if(!tree.exists(father))
-                    tree.add(father, father);
-                while(ss >> tmp){
-                    tree.add(father, tmp);
-                }
-            }
-        }else{
-            first = false;
-            sscanf(st.c_str(), "%d %d", &s, &f);
-            tree.clear();
+        string parent = c_parent;
+        string children = s.substr(parent.length());
+        string child;
+        stringstream children_stream(children);
+        node* parent_node = people.insert({parent, new node(parent)}).first->second;
+        while(children_stream >> child){
+            node* child_node = people.insert({child, new node(child)}).first->second;
+            parent_node->add_child(child_node);
         }
-        getline(cin, st);
     }
+
+    string root_name = find_root_name();
+    cout << "ROOT: " << root_name << endl;
+    cout << people[root_name]->min_subtree_size() << endl;
+    people[root_name]->log_tree();
+    return 0;
 }
